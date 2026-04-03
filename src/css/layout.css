@@ -117,7 +117,7 @@
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: clamp(1rem, 4vw, 2rem);
+  align-items: center;
   white-space: nowrap;
 }
 
@@ -129,6 +129,12 @@
   letter-spacing: 0.1em;
   text-transform: lowercase;
   transition: color var(--transition);
+}
+
+.social-link:not(:last-child)::after {
+  content: '·';
+  margin: 0 clamp(0.6rem, 2vw, 1.1rem);
+  color: #222;
 }
 
 .social-link:hover {
