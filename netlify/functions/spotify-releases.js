@@ -89,6 +89,8 @@ async function fetchArtistReleases(accessToken, artistId, limit, includeGroups) 
       id: album.id,
       title: album.name,
       artist: artists[0] || 'inutech',
+      artists,
+      featuredArtists: artists.slice(1),
       type,
       releaseDate: album.release_date,
       year: parseInt(album.release_date?.split('-')[0]) || null,

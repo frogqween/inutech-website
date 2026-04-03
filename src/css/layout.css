@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
   padding: 1rem;
   z-index: 0;
@@ -10,12 +10,12 @@
 
 
 .giant-stars-wrapper {
-  font-family: var(--font-mono); 
-  font-size: clamp(7.5rem, 22.5vw, 18.5rem);
+  font-family: var(--font-mono);
+  font-size: clamp(3.5rem, 22.5vw, 18.5rem);
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: clamp(0.5rem, 2.5vw, 2.5rem);
+  gap: clamp(0.3rem, 2.5vw, 2.5rem);
   user-select: none;
 }
 
@@ -100,27 +100,11 @@
   color: #ffffff;
 }
 
-@media (max-width: 768px) {
-  .giant-stars-wrapper {
-    flex-direction: column;
-    gap: 2.5rem;
-    font-size: 11rem;
-    padding: 3rem 0;
-  }
-  .bracket {
-    display: none;
-  }
-
-  .hover-label {
+/* Touch devices: show label on tap (focus) since there's no hover */
+@media (hover: none) {
+  .text-star:focus .hover-label,
+  .text-star:active .hover-label {
     opacity: 1;
-    position: relative;
-    top: 0;
-    transform: none !important;
-    margin-top: 1.5rem;
-    color: #888888 !important; /* Neutral muted labels */
-    font-size: 1.25rem;
-  }
-  .text-star:hover .star-icon {
-    transform: none;
+    transform: translate(-50%, 30px);
   }
 }
