@@ -1,0 +1,25 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET must be set in Netlify dashboard
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+
+[[redirects]]
+  from = "/api/music/spotify-releases"
+  to = "/.netlify/functions/spotify-releases"
+  status = 200
+
+[[redirects]]
+  from = "/api/music/apple-releases"
+  to = "/.netlify/functions/apple-releases"
+  status = 200

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>inutech</title>
+    <link rel="stylesheet" href="./src/css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,400;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+      .page-nav {
+        display: flex;
+        justify-content: center;
+        padding: 2rem 0 1.5rem;
+      }
+
+      .nav-home {
+        font-family: var(--font-mono);
+        font-size: 2rem;
+        font-weight: 700;
+        text-decoration: none;
+        color: #444444;
+        letter-spacing: -0.02em;
+        transition: color 0.4s ease;
+      }
+
+      .nav-home:hover {
+        color: #ffffff;
+      }
+
+      .music-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 2rem;
+        padding: 2rem 3rem 4rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .release {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+
+      .release-cover {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        display: block;
+        background: #111;
+      }
+
+      .release-links {
+        display: flex;
+        gap: 0.75rem;
+      }
+
+      .release-links a {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        color: #555555;
+        text-decoration: none;
+        text-transform: lowercase;
+        letter-spacing: 0.04em;
+        transition: color 0.3s ease;
+      }
+
+      .release-links a:hover {
+        color: #ffffff;
+      }
+
+      .music-loading,
+      .music-error {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: #444;
+        text-align: center;
+        padding: 4rem;
+        letter-spacing: 0.05em;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="page-nav">
+      <a href="index.html" class="nav-home" aria-label="home">[★★★]</a>
+    </nav>
+
+    <div id="music-container">
+      <p class="music-loading">loading...</p>
+    </div>
+
+    <script>
+      const SPOTIFY_ID = '0cY13KDbHCE1yDrxCxa5KX';
+      const APPLE_ID = '1718278352';
+
+      function normalize(str) {
+        return str?.toLowerCase().replace(/[^a-z0-9]/g, '') || '';
+      }
+
+      async function loadReleases() {
+        const [spotifyRes, appleRes] = await Promise.allSettled([
+          fetch(`/.netlify/functions/spotify-releases?artistIds=${SPOTIFY_ID}&includeGroups=album,single&limit=50`),
+          fetch(`/.netlify/functions/apple-releases?artistIds=${APPLE_ID}&limit=200`)
+        ]);
+
+        let spotifyReleases = [];
+        if (spotifyRes.status === 'fulfilled' && spotifyRes.value.ok) {
+          const data = await spotifyRes.value.json();
+          spotifyReleases = data.releases || [];
+        }
+
+        let appleMap = new Map();
+        if (appleRes.status === 'fulfilled' && appleRes.value.ok) {
+          const data = await appleRes.value.json();
+          const results = data.artistResults?.[APPLE_ID]?.results || [];
+          results
+            .filter(r => r.wrapperType === 'collection')
+            .forEach(r => {
+              const cover = r.artworkUrl100?.replace(/\/\d+x\d+bb\.(jpg|png)/, '/1000x1000bb.$1');
+              appleMap.set(normalize(r.collectionName), {
+                appleUrl: r.collectionViewUrl,
+                cover,
+                year: new Date(r.releaseDate).getFullYear()
+              });
+            });
+        }
+
+        // Merge: Spotify as base, enrich with Apple links
+        const merged = spotifyReleases.map(s => {
+          const apple = appleMap.get(normalize(s.title));
+          if (apple) appleMap.delete(normalize(s.title)); // mark as matched
+          return {
+            title: s.title,
+            cover: s.coverUrl || apple?.cover || null,
+            spotifyUrl: s.spotifyUrl,
+            appleUrl: apple?.appleUrl || null,
+            year: s.year
+          };
+        });
+
+        // Add Apple-only releases
+        appleMap.forEach((a, key) => {
+          merged.push({ title: key, cover: a.cover, spotifyUrl: null, appleUrl: a.appleUrl, year: a.year });
+        });
+
+        merged.sort((a, b) => (b.year || 0) - (a.year || 0));
+        return merged;
+      }
+
+      function render(releases) {
+        const container = document.getElementById('music-container');
+
+        if (!releases.length) {
+          container.innerHTML = '<p class="music-error">no releases found</p>';
+          return;
+        }
+
+        const grid = document.createElement('div');
+        grid.className = 'music-grid';
+
+        releases.forEach(r => {
+          const item = document.createElement('div');
+          item.className = 'release';
+
+          const img = document.createElement('img');
+          img.className = 'release-cover';
+          img.src = r.cover || '';
+          img.alt = r.title;
+          img.loading = 'lazy';
+          item.appendChild(img);
+
+          const links = document.createElement('div');
+          links.className = 'release-links';
+
+          if (r.spotifyUrl) {
+            const a = document.createElement('a');
+            a.href = r.spotifyUrl;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.textContent = 'spotify';
+            links.appendChild(a);
+          }
+
+          if (r.appleUrl) {
+            const a = document.createElement('a');
+            a.href = r.appleUrl;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.textContent = 'apple music';
+            links.appendChild(a);
+          }
+
+          item.appendChild(links);
+          grid.appendChild(item);
+        });
+
+        container.innerHTML = '';
+        container.appendChild(grid);
+      }
+
+      loadReleases()
+        .then(render)
+        .catch(() => {
+          document.getElementById('music-container').innerHTML =
+            '<p class="music-error">could not load releases</p>';
+        });
+    </script>
+  </body>
+</html>

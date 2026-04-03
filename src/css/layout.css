@@ -1,0 +1,126 @@
+.universe-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  position: relative;
+  padding: 1rem;
+  z-index: 0;
+}
+
+
+.giant-stars-wrapper {
+  font-family: var(--font-mono); 
+  font-size: clamp(7.5rem, 22.5vw, 18.5rem);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 2.5vw, 2.5rem);
+  user-select: none;
+}
+
+.bracket {
+  color: #333333;
+  font-weight: 400;
+  transition: color var(--transition);
+  opacity: 0;
+}
+
+/* 4. Cinematic Entry Mechanics */
+.bracket:first-child {
+  margin-right: -0.25em;
+  animation: bracketReveal 1.8s ease-out 0.2s forwards;
+}
+
+.bracket:last-child {
+  margin-left: -0.25em;
+  animation: bracketReveal 1.8s ease-out 1.1s forwards;
+}
+
+.giant-stars-wrapper:has(.text-star:hover) .bracket {
+  color: #111111; 
+}
+
+.text-star {
+  text-decoration: none;
+  color: #444444; /* Dimly lit state */
+  position: relative;
+  transition: color var(--transition);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  line-height: 1;
+  opacity: 0; 
+}
+
+/* Staggered load for stars emerging from the void */
+.text-star-1 { animation: starEmerge 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards; }
+.text-star-2 { animation: starEmerge 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards; }
+.text-star-3 { animation: starEmerge 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards; }
+
+.star-icon {
+  display: inline-block;
+  transition: transform 0.4s ease;
+}
+
+/* Pure, stark white glow-up on parent */
+.text-star:hover {
+  color: #ffffff;
+}
+
+.text-star:hover .star-icon {
+  transform: scale(1.15);
+}
+
+.hover-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 20px);
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  
+  /* 2. Brutalist Default System Font */
+  font-family: var(--font-secondary);
+  font-style: italic;
+  font-weight: 400;
+  
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  text-transform: lowercase;
+  color: #ffffff;
+}
+
+.text-star:hover .hover-label {
+  opacity: 1;
+  transform: translate(-50%, 30px);
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .giant-stars-wrapper {
+    flex-direction: column;
+    gap: 2.5rem;
+    font-size: 11rem;
+    padding: 3rem 0;
+  }
+  .bracket {
+    display: none;
+  }
+
+  .hover-label {
+    opacity: 1;
+    position: relative;
+    top: 0;
+    transform: none !important;
+    margin-top: 1.5rem;
+    color: #888888 !important; /* Neutral muted labels */
+    font-size: 1.25rem;
+  }
+  .text-star:hover .star-icon {
+    transform: none;
+  }
+}
