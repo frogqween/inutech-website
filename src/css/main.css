@@ -19,6 +19,7 @@ body {
   color: var(--color-text);
   font-family: var(--font-primary);
   min-height: 100dvh;
+  min-height: 100svh;
   -webkit-font-smoothing: antialiased;
 }
 
