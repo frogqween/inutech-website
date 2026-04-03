@@ -5,14 +5,27 @@
 }
 
 .nav-home {
-  font-family: var(--font-mono);
   font-size: clamp(1.75rem, 7vw, 2.5rem);
-  font-weight: 700;
   text-decoration: none;
   color: #444444;
-  letter-spacing: -0.02em;
   transition: color 0.4s ease;
-  padding: 0.5rem;
+  padding: 0.5rem 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.nav-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.12em;
+}
+
+.nav-stars .star-shape {
+  width: 0.8em;
+  height: 0.8em;
 }
 
 .nav-home:hover {
