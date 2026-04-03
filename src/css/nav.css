@@ -6,7 +6,7 @@
 
 .nav-home {
   font-family: var(--font-mono);
-  font-size: clamp(1.25rem, 5vw, 2rem);
+  font-size: clamp(1.75rem, 7vw, 2.5rem);
   font-weight: 700;
   text-decoration: none;
   color: #444444;
