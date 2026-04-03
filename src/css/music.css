@@ -39,6 +39,9 @@
 
 .release-info {
   padding: 0.6rem 0 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .release-title {
@@ -47,7 +50,10 @@
   color: #ffffff;
   line-height: 1.3;
   margin-bottom: 0.2rem;
-  overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .release-sub {
@@ -62,6 +68,7 @@
 .release-buttons {
   display: flex;
   gap: 0.4rem;
+  margin-top: auto;
 }
 
 .release-buttons a {
